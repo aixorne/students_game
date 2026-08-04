@@ -1,69 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Summary of the Plan.</title> 
 
+<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
 
 <!-- Bootstrap 5 CDN -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
 
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style> 
+:root {
+  --primary-color: #0066FF;
+  --header-bg: linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%);
+  --accent-color: #eef2f5;
+}
+
 body {
   font-family: 'Prompt', sans-serif;
-  background: #f5f7fb;
+  background: #f0f4f9;
+  color: #333;
 } 
 
-textarea {
-  resize: none;
-} 
+.app-header {
+  background: var(--header-bg);
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2);
+}
 
 .card-box {
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,.15);
-  padding: 20px;
-  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 28px;
+  margin-top: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
 } 
+
+.table-header-custom {
+  background: var(--header-bg);
+  border-radius: 12px 12px 0 0;
+}
+
+/* Custom Style สำหรับ Form Control, Select และ Date */
+.form-select, 
+.form-control {
+  border-radius: 10px;
+  border: 1.5px solid #dce4ec;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  transition: all 0.25s ease-in-out;
+  background-color: #fdfdfd;
+}
+
+.form-select:hover, 
+.form-control:hover {
+  border-color: #b0c4de;
+  background-color: #ffffff;
+}
+
+.form-select:focus, 
+.form-control:focus {
+  border-color: #4364F7;
+  box-shadow: 0 0 0 4px rgba(67, 100, 247, 0.15);
+  background-color: #ffffff;
+}
+
+/* ปรับแต่ง Dropdown Option */
+.form-select option {
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+/* ปรับแต่ง Calendar Picker Icon ใน Date input */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(35%) sepia(80%) saturate(1500%) hue-rotate(210deg);
+  transition: transform 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  transform: scale(1.2);
+}
+
+textarea.form-control {
+  resize: none;
+  background-color: #f8fafc;
+  font-family: monospace, 'Prompt';
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Button Custom Styles */
+.btn {
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+}
+
+.btn-success { background-color: #2ec4b6; border: none; }
+.btn-success:hover { background-color: #28b0a3; }
+
+.btn-warning { background-color: #ff9f1c; border: none; color: #fff; }
+.btn-warning:hover { background-color: #e88e13; color: #fff; }
+
+.btn-primary { background-color: #4364F7; border: none; }
+.btn-primary:hover { background-color: #3151d8; }
+
+.btn-danger { background-color: #e63946; border: none; }
+.btn-danger:hover { background-color: #d62837; }
 </style> 
 
 </head> 
 
 <body> 
 
-<div style="background:#006699;">
-  <div class="text-center text-white p-2">
-    <h1>สรุปยอดแผนประจำวัน</h1>
+<div class="app-header">
+  <div class="text-center text-white p-3">
+    <h2 class="mb-0 fw-bold">📊 สรุปยอดแผนประจำวัน</h2>
   </div>
 </div> 
 
-<div class="container"> 
+<div class="container mb-5"> 
   <div class="card-box"> 
 
-    <div style="background:#0066FF;border-radius:10px;"> 
-      <div class="row pt-2 ps-2 pe-2 text-white"> 
-        <div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0">
-          <h3 class="m-2">สินค้า</h3>
+    <div class="table-header-custom shadow-sm overflow-hidden"> 
+      <div class="row pt-3 ps-3 pe-3 text-white fw-bold"> 
+        <div class="col-md-3 col-6 text-center pb-2">
+          <h5>สินค้า</h5>
         </div> 
-        <div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0">
-          <h3 class="m-2">Lot</h3>
+        <div class="col-md-3 col-6 text-center pb-2">
+          <h5>Lot</h5>
         </div> 
-        <div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0">
-          <h3 class="m-2">Batch</h3>
+        <div class="col-md-3 col-6 text-center pb-2">
+          <h5>Batch</h5>
         </div> 
-        <div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center">
-          <h3 class="m-2">รับเข้า</h3>
+        <div class="col-md-3 col-6 text-center pb-2">
+          <h5>รับเข้า</h5>
         </div> 
       </div> 
 
-      <div class="row pb-2 ps-2 pe-2"> 
-        <div class="col-3 p-3 border border-info-subtle border-end-0 border-top-0"> 
+      <div class="row pb-3 ps-3 pe-3 bg-white pt-2 rounded-bottom"> 
+        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
           <select class="form-select" id="product"> 
-            <option value="">📦 เลือกสินค้า</option> 
+            <option value="">📦 เลือกสินค้า...</option> 
             <option>เต้าส่วน</option>
             <option>กล้วยชิ้น</option>
             <option>กล้วยลูก</option>
@@ -81,16 +174,16 @@ textarea {
           </select> 
         </div> 
 
-        <div class="col-3 p-3 border border-info-subtle border-end-0 border-top-0"> 
+        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
           <input type="date" class="form-control" id="lotDate"> 
         </div> 
 
-        <div class="col-3 p-3 border border-info-subtle border-end-0 border-top-0"> 
-          <input type="text" class="form-control" id="batch" placeholder="กรอกข้อมูล"> 
+        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
+          <input type="text" class="form-control" id="batch" placeholder="กรอกข้อมูล Batch"> 
         </div> 
 
-        <div class="col-3 p-3 border border-info-subtle border-top-0"> 
-          <input type="number" class="form-control" id="qty" placeholder="กรอกข้อมูล"> 
+        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
+          <input type="number" class="form-control" id="qty" placeholder="กรอกจำนวนรับเข้า"> 
         </div> 
       </div>
     </div> 
@@ -102,13 +195,13 @@ textarea {
     </div> 
 
     <!-- ผลลัพธ์และปุ่มจัดการผลลัพธ์ด้านล่าง -->
-    <div class="mt-3"> 
-      <label class="form-label fw-bold">ผลลัพธ์</label> 
-      <textarea id="result" class="form-control" rows="10" readonly placeholder="กด Save เพื่อบันทึกข้อมูล..."></textarea> 
+    <div class="mt-4"> 
+      <label class="form-label fw-bold fs-5 text-secondary">📋 ผลลัพธ์</label> 
+      <textarea id="result" class="form-control" rows="8" readonly placeholder="กด Save เพื่อบันทึกข้อมูล..."></textarea> 
       
-      <div class="mt-2 d-flex gap-2">
-        <button class="btn btn-primary" onclick="copyText()">📋 Copy</button> 
-        <button class="btn btn-danger" onclick="clearTextArea()">🗑 ลบข้อความ</button> 
+      <div class="mt-3 d-flex gap-2">
+        <button class="btn btn-primary" onclick="copyText()">📋 Copy ข้อความ</button> 
+        <button class="btn btn-danger" onclick="clearTextArea()">🗑 ลบข้อความทั้งหมด</button> 
       </div>
     </div> 
 
@@ -118,6 +211,7 @@ textarea {
 <script> 
 const STORAGE_KEY = "summary_plan_data"; 
 
+// โหลดข้อมูลเก่าเมื่อเปิดหน้า
 window.onload = function(){ 
   const data = localStorage.getItem(STORAGE_KEY); 
   if(data){
@@ -132,13 +226,24 @@ function saveData(){
   const qty = document.getElementById("qty").value;
   const result = document.getElementById("result"); 
 
+  // SweetAlert Validation
   if(product.value == ""){
-    alert("กรุณาเลือกสินค้า");
+    Swal.fire({
+      icon: 'warning',
+      title: 'แจ้งเตือน',
+      text: 'กรุณาเลือกสินค้า',
+      confirmButtonColor: '#4364F7'
+    });
     return;
   } 
 
   if(lotDate == "" || batch == "" || qty == ""){
-    alert("กรุณากรอกข้อมูลให้ครบ");
+    Swal.fire({
+      icon: 'warning',
+      title: 'ข้อมูลไม่ครบถ้วน',
+      text: 'กรุณากรอก วันที่, Batch และ จำนวน ให้ครบถ้วน',
+      confirmButtonColor: '#4364F7'
+    });
     return;
   } 
 
@@ -148,8 +253,7 @@ function saveData(){
   // ใส่ comma
   const number = Number(qty).toLocaleString("en-US"); 
 
-  // แก้ไขใส่ Backticks (`) เรียบร้อยแล้ว
-  const text = `${product.options[product.selectedIndex].text}\n${day}/${batch}=${number}`; 
+  const text = `${product.options[product.selectedIndex].text}\n${day}/${batch}=${number};`; 
 
   if(result.value != ""){
     result.value += "\n\n";
@@ -159,6 +263,15 @@ function saveData(){
 
   // บันทึก LocalStorage
   localStorage.setItem(STORAGE_KEY, result.value); 
+
+  // แจ้งเตือนสำเร็จ
+  Swal.fire({
+    icon: 'success',
+    title: 'บันทึกสำเร็จ!',
+    text: 'เพิ่มข้อมูลลงในผลลัพธ์เรียบร้อยแล้ว',
+    timer: 1500,
+    showConfirmButton: false
+  });
 
   // ล้างฟอร์ม
   clearForm(); 
@@ -175,26 +288,64 @@ function copyText(){
   const result = document.getElementById("result"); 
 
   if(result.value == ""){
-    alert("ไม่มีข้อมูลสำหรับคัดลอก");
+    Swal.fire({
+      icon: 'info',
+      title: 'ไม่พบข้อมูล',
+      text: 'ไม่มีข้อมูลสำหรับคัดลอก',
+      confirmButtonColor: '#4364F7'
+    });
     return;
   } 
 
   navigator.clipboard.writeText(result.value)
   .then(()=>{
-    alert("คัดลอกข้อความเรียบร้อย");
+    Swal.fire({
+      icon: 'success',
+      title: 'คัดลอกแล้ว!',
+      text: 'คัดลอกข้อความลง Clipboard เรียบร้อยแล้ว',
+      timer: 1500,
+      showConfirmButton: false
+    });
   })
   .catch(()=>{
     result.select();
     document.execCommand("copy");
-    alert("คัดลอกข้อความเรียบร้อย");
+    Swal.fire({
+      icon: 'success',
+      title: 'คัดลอกแล้ว!',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }); 
 } 
 
 function clearTextArea(){ 
-  if(confirm("ต้องการลบข้อความทั้งหมดใช่หรือไม่?")){ 
-    document.getElementById("result").value = ""; 
-    localStorage.removeItem(STORAGE_KEY); 
-  } 
+  if(document.getElementById("result").value == ""){
+    return;
+  }
+
+  Swal.fire({
+    title: 'ยืนยันการลบ?',
+    text: "คุณต้องการลบข้อความทั้งหมดใช่หรือไม่ ข้อมูลจะถูกลบออกจากความจำเครื่องด้วย",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e63946',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'ใช่, ลบทั้งหมด!',
+    cancelButtonText: 'ยกเลิก'
+  }).then((resultAction) => {
+    if (resultAction.isConfirmed) {
+      document.getElementById("result").value = ""; 
+      localStorage.removeItem(STORAGE_KEY); 
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'ลบเรียบร้อย!',
+        timer: 1200,
+        showConfirmButton: false
+      });
+    }
+  });
 } 
 </script> 
 
