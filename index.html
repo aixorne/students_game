@@ -160,7 +160,7 @@ textarea.form-control {
     <div class="table-header-custom shadow-sm"> 
       <div class="row g-3"> 
 
-        <!-- ปุ่มเลือกสินค้า (เปิด Modal สวยๆ) -->
+        <!-- ปุ่มเลือกสินค้า (เปิด Modal) -->
         <div class="col-md-3 col-12">
           <label class="form-label text-white fw-bold d-md-block d-none">สินค้า</label>
           <button class="custom-select-btn" type="button" data-bs-toggle="modal" data-bs-target="#productModal">
@@ -182,10 +182,10 @@ textarea.form-control {
           <input type="text" class="form-control" id="batch" placeholder="🏷️ กรอก Batch"> 
         </div> 
 
-        <!-- ช่องกรอกจำนวน -->
+        <!-- ช่องกรอกจำนวน (ไม่บังคับ) -->
         <div class="col-md-3 col-12"> 
-          <label class="form-label text-white fw-bold d-md-block d-none">รับเข้า</label>
-          <input type="number" class="form-control" id="qty" placeholder="🔢 จำนวนรับเข้า"> 
+          <label class="form-label text-white fw-bold d-md-block d-none">รับเข้า (ไม่บังคับ)</label>
+          <input type="number" class="form-control" id="qty" placeholder="🔢 จำนวนรับเข้า (ถ้ามี)"> 
         </div> 
 
       </div>
@@ -211,7 +211,7 @@ textarea.form-control {
   </div> 
 </div> 
 
-<!-- Modal เลือกสินค้าแบบค้นหาและสวยงาม -->
+<!-- Modal เลือกสินค้า -->
 <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="border-radius: 20px; border:none;">
@@ -249,33 +249,30 @@ textarea.form-control {
 const STORAGE_KEY = "summary_plan_data"; 
 let productModalObj;
 
-// เริ่มต้นเปิดหน้าเว็บ
 window.onload = function(){ 
   const data = localStorage.getItem(STORAGE_KEY); 
   if(data){
     document.getElementById("result").value = data;
   } 
 
-  // ติดตั้ง Flatpickr Date Picker (ภาษาไทย สไตล์ปฏิทินสว่าง)
+  // ติดตั้ง Flatpickr Date Picker
   flatpickr("#lotDate", {
     locale: "th",
     dateFormat: "Y-m-d",
     altInput: true,
     altFormat: "j F Y",
-    disableMobile: "true" // บังคับใช้ธีมสวยงามไม่ใช้ของระบบมือถือ
+    disableMobile: "true"
   });
 
   productModalObj = new bootstrap.Modal(document.getElementById('productModal'));
 };
 
-// เลือกสินค้าจาก Modal
 function selectProduct(name) {
   document.getElementById("selectedProductText").innerText = "📦 " + name;
   document.getElementById("productVal").value = name;
   productModalObj.hide();
 }
 
-// ระบบค้นหาสินค้าใน Modal
 function filterProducts() {
   const input = document.getElementById('searchProduct').value.toLowerCase();
   const items = document.querySelectorAll('#productList .list-group-item');
@@ -292,21 +289,25 @@ function saveData(){
   const qty = document.getElementById("qty").value;
   const result = document.getElementById("result"); 
 
+  // บังคับเฉพาะ "สินค้า"
   if(productVal == ""){
     Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณาเลือกสินค้า', confirmButtonColor: '#4364F7' });
     return;
   } 
 
-  if(lotDate == "" || batch == "" || qty == ""){
-    Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอก วันที่, Batch และ จำนวน ให้ครบถ้วน', confirmButtonColor: '#4364F7' });
+  // บังคับเฉพาะ "วันที่ (Lot)" และ "Batch"
+  if(lotDate == "" || batch == ""){
+    Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอก วันที่ (Lot) และ Batch ให้เรียบร้อย', confirmButtonColor: '#4364F7' });
     return;
   } 
 
   // ดึงเฉพาะ "วัน"
   const day = lotDate.split("-")[2]; 
-  const number = Number(qty).toLocaleString("en-US"); 
+  
+  // ถ้าไม่ใส่จำนวน ให้แสดงเป็น 0
+  const number = qty !== "" ? Number(qty).toLocaleString("en-US") : "0"; 
 
-  const text = `${productVal}\n${day}/${batch}=${number}`; 
+  const text = `${productVal}\n${day}/${batch}=${number};`; 
 
   if(result.value != ""){
     result.value += "\n\n";
