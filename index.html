@@ -110,18 +110,54 @@ body {
   border-color: var(--accent-color);
 }
 
-textarea.form-control {
-  resize: none;
+/* Container สำหรับแสดงรายการผลลัพธ์ */
+.result-display-box {
   background-color: #f8fafc;
+  border: 1.5px solid #dce4ec;
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 180px;
   font-family: monospace, 'Prompt';
   font-size: 1rem;
-  line-height: 1.6;
+}
+
+.product-group-block {
+  margin-bottom: 16px;
+}
+
+.product-title {
+  font-weight: 700;
+  color: #2b3674;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.lot-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.btn-delete-item {
+  color: #e63946;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.btn-delete-item:hover {
+  transform: scale(1.25);
 }
 
 /* Buttons Styling */
 .btn {
   border-radius: 12px;
-  padding: 10px 20px;
+  padding: 10px 18px;
   font-weight: 500;
   transition: all 0.2s ease;
 }
@@ -139,6 +175,9 @@ textarea.form-control {
 
 .btn-primary { background-color: var(--accent-color); border: none; }
 .btn-primary:hover { background-color: #3151d8; }
+
+.btn-info { background-color: #00b4d8; border: none; color: #fff; }
+.btn-info:hover { background-color: #0096c7; color: #fff; }
 
 .btn-danger { background-color: #e63946; border: none; }
 .btn-danger:hover { background-color: #d62837; }
@@ -199,11 +238,18 @@ textarea.form-control {
 
     <!-- ผลลัพธ์ -->
     <div class="mt-4"> 
-      <label class="form-label fw-bold fs-5 text-secondary">📋 ผลลัพธ์</label> 
-      <textarea id="result" class="form-control" rows="8" readonly placeholder="กด Save เพื่อบันทึกข้อมูล..."></textarea> 
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <label class="form-label fw-bold fs-5 text-secondary mb-0">📋 ผลลัพธ์</label> 
+      </div>
+
+      <!-- กล่องแสดงผลรายการ -->
+      <div id="resultDisplay" class="result-display-box">
+        <span class="text-muted">ยังไม่มีข้อมูล กด Save เพื่อบันทึกข้อมูล...</span>
+      </div>
       
-      <div class="mt-3 d-flex gap-2">
+      <div class="mt-3 d-flex flex-wrap gap-2">
         <button class="btn btn-primary" onclick="copyText()">📋 Copy ข้อความ</button> 
+        <button class="btn btn-info" onclick="sortData()">🔤 จัดเรียง ก-ฮ</button> 
         <button class="btn btn-danger" onclick="clearTextArea()">🗑 ลบข้อความทั้งหมด</button> 
       </div>
     </div> 
@@ -246,14 +292,20 @@ textarea.form-control {
 </div>
 
 <script> 
-const STORAGE_KEY = "summary_plan_data"; 
+const STORAGE_KEY = "summary_plan_data_v2"; 
+let appData = []; // [{ product: 'เผือกทิพย์', items: ['05/41-285=10,290', '06/01-21=875'] }]
 let productModalObj;
 
 window.onload = function(){ 
   const data = localStorage.getItem(STORAGE_KEY); 
   if(data){
-    document.getElementById("result").value = data;
+    try {
+      appData = JSON.parse(data);
+    } catch(e) {
+      appData = [];
+    }
   } 
+  renderData();
 
   // ติดตั้ง Flatpickr Date Picker
   flatpickr("#lotDate", {
@@ -282,12 +334,36 @@ function filterProducts() {
   });
 }
 
+function renderData() {
+  const displayBox = document.getElementById("resultDisplay");
+  if(appData.length === 0){
+    displayBox.innerHTML = '<span class="text-muted">ยังไม่มีข้อมูล กด Save เพื่อบันทึกข้อมูล...</span>';
+    return;
+  }
+
+  let html = "";
+  appData.forEach((group, groupIdx) => {
+    html += `<div class="product-group-block">`;
+    html += `<div class="product-title">${group.product}</div>`;
+    group.items.forEach((itemText, itemIdx) => {
+      html += `
+        <div class="lot-item-row">
+          <span>${itemText}</span>
+          <button class="btn-delete-item" onclick="deleteSingleItem(${groupIdx}, ${itemIdx})" title="ลบรายการนี้">⨂</button>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  });
+
+  displayBox.innerHTML = html;
+}
+
 function saveData(){ 
   const productVal = document.getElementById("productVal").value;
   const lotDate = document.getElementById("lotDate").value;
   const batch = document.getElementById("batch").value.trim();
   const qty = document.getElementById("qty").value;
-  const result = document.getElementById("result"); 
 
   if(productVal == ""){
     Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณาเลือกสินค้า', confirmButtonColor: '#4364F7' });
@@ -303,31 +379,18 @@ function saveData(){
   const number = qty !== "" ? Number(qty).toLocaleString("en-US") : ""; 
   const lotLine = `${day}/${batch}=${number}`;
 
-  if(result.value.trim() === ""){
-    // ถ้าไม่มีข้อมูลเดิม ให้ใส่ชื่อสินค้าขึ้นต้น
-    result.value = `${productVal}\n${lotLine}`;
+  // ค้นหากลุ่มสินค้านี้
+  let existingGroup = appData.find(g => g.product === productVal);
+  if(existingGroup){
+    existingGroup.items.push(lotLine);
   } else {
-    const lines = result.value.trim().split("\n");
-    
-    // ค้นหาสินค้าตัวล่าสุด
-    let lastProduct = "";
-    for(let i = lines.length - 1; i >= 0; i--){
-      if(lines[i].trim() !== "" && !lines[i].includes("=")){
-        lastProduct = lines[i].trim();
-        break;
-      }
-    }
-
-    // ถ้าบันทึกสินค้าเดิม ให้ต่อบรรทัดใหม่ทันทีโดยไม่พิมพ์ชื่อสินค้าซ้ำ
-    if(lastProduct === productVal){
-      result.value += `\n${lotLine}`;
-    } else {
-      // ถ้าเปลี่ยนสินค้าใหม่ ให้เว้นบรรทัด แล้วขึ้นชื่อสินค้าใหม่
-      result.value += `\n\n${productVal}\n${lotLine}`;
-    }
+    appData.push({
+      product: productVal,
+      items: [lotLine]
+    });
   }
 
-  localStorage.setItem(STORAGE_KEY, result.value); 
+  saveAndRefresh();
 
   Swal.fire({
     icon: 'success',
@@ -338,6 +401,51 @@ function saveData(){
 
   clearForm(); 
 } 
+
+function deleteSingleItem(groupIdx, itemIdx) {
+  const targetItem = appData[groupIdx].items[itemIdx];
+  const productName = appData[groupIdx].product;
+
+  Swal.fire({
+    title: 'ยืนยันการลบ?',
+    text: `ต้องการลบรายการ "${productName} : ${targetItem}" ใช่หรือไม่?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e63946',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'ใช่, ลบรายการนี้!',
+    cancelButtonText: 'ยกเลิก'
+  }).then((resultAction) => {
+    if (resultAction.isConfirmed) {
+      appData[groupIdx].items.splice(itemIdx, 1);
+      // ถ้าลบหมดจนไม่มีรายการในกลุ่มสินค้านั้นแล้ว ให้ลบหัวข้อสินค้านั้นออกด้วย
+      if(appData[groupIdx].items.length === 0){
+        appData.splice(groupIdx, 1);
+      }
+      saveAndRefresh();
+      Swal.fire({ icon: 'success', title: 'ลบเรียบร้อย!', timer: 1000, showConfirmButton: false });
+    }
+  });
+}
+
+function sortData() {
+  if(appData.length === 0) return;
+  // จัดเรียงกลุ่มสินค้าตามชื่อภาษาไทย (ก-ฮ)
+  appData.sort((a, b) => a.product.localeCompare(b.product, 'th'));
+  saveAndRefresh();
+  Swal.fire({ icon: 'success', title: 'จัดเรียงข้อมูลเรียบร้อย!', timer: 1200, showConfirmButton: false });
+}
+
+function getFormattedPlainText() {
+  return appData.map(group => {
+    return `${group.product}\n` + group.items.join("\n");
+  }).join("\n\n");
+}
+
+function saveAndRefresh() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  renderData();
+}
 
 function clearForm(){ 
   document.getElementById("selectedProductText").innerText = "📦 เลือกสินค้า...";
@@ -351,31 +459,35 @@ function clearForm(){
 }
 
 function copyText(){ 
-  const result = document.getElementById("result"); 
-  if(result.value == ""){
+  const text = getFormattedPlainText();
+  if(text === ""){
     Swal.fire({ icon: 'info', title: 'ไม่พบข้อมูล', text: 'ไม่มีข้อมูลสำหรับคัดลอก', confirmButtonColor: '#4364F7' });
     return;
   } 
 
-  navigator.clipboard.writeText(result.value)
+  navigator.clipboard.writeText(text)
   .then(()=>{
-    Swal.fire({ icon: 'success', title: 'คัดลอกแล้ว!', timer: 1300, showConfirmButton: false });
+    Swal.fire({ icon: 'success', title: 'คัดลอกเรียบร้อย!', timer: 1300, showConfirmButton: false });
   })
   .catch(()=>{
-    result.select();
+    const dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
     document.execCommand("copy");
-    Swal.fire({ icon: 'success', title: 'คัดลอกแล้ว!', timer: 1300, showConfirmButton: false });
+    document.body.removeChild(dummy);
+    Swal.fire({ icon: 'success', title: 'คัดลอกเรียบร้อย!', timer: 1300, showConfirmButton: false });
   }); 
 } 
 
 function clearTextArea(){ 
-  if(document.getElementById("result").value == ""){
+  if(appData.length === 0){
     return;
   }
 
   Swal.fire({
-    title: 'ยืนยันการลบ?',
-    text: "ต้องการลบข้อความทั้งหมดใช่หรือไม่?",
+    title: 'ยืนยันการลบทั้งหมด?',
+    text: "ต้องการลบข้อมูลทั้งหมดใช่หรือไม่?",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#e63946',
@@ -384,8 +496,8 @@ function clearTextArea(){
     cancelButtonText: 'ยกเลิก'
   }).then((resultAction) => {
     if (resultAction.isConfirmed) {
-      document.getElementById("result").value = ""; 
-      localStorage.removeItem(STORAGE_KEY); 
+      appData = [];
+      saveAndRefresh();
       Swal.fire({ icon: 'success', title: 'ลบเรียบร้อย!', timer: 1200, showConfirmButton: false });
     }
   });
