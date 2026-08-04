@@ -17,7 +17,7 @@
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Flatpickr (Custom Datepicker สวยๆ) -->
+<!-- Flatpickr (Custom Datepicker) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -289,25 +289,22 @@ function saveData(){
   const qty = document.getElementById("qty").value;
   const result = document.getElementById("result"); 
 
-  // บังคับเฉพาะ "สินค้า"
   if(productVal == ""){
     Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณาเลือกสินค้า', confirmButtonColor: '#4364F7' });
     return;
   } 
 
-  // บังคับเฉพาะ "วันที่ (Lot)" และ "Batch"
   if(lotDate == "" || batch == ""){
     Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอก วันที่ (Lot) และ Batch ให้เรียบร้อย', confirmButtonColor: '#4364F7' });
     return;
   } 
 
-  // ดึงเฉพาะ "วัน"
   const day = lotDate.split("-")[2]; 
   
-  // ถ้าไม่ใส่จำนวน ให้แสดงเป็น 0
-  const number = qty !== "" ? Number(qty).toLocaleString("en-US") : "0"; 
+  // ถ้าไม่ได้กรอกจำนวน ให้ปล่อยเป็นค่าว่าง ("") และลบตัว ; ออกแล้ว
+  const number = qty !== "" ? Number(qty).toLocaleString("en-US") : ""; 
 
-  const text = `${productVal}\n${day}/${batch}=${number};`; 
+  const text = `${productVal}\n${day}/${batch}=${number}`; 
 
   if(result.value != ""){
     result.value += "\n\n";
