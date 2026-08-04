@@ -1,40 +1,79 @@
 <!DOCTYPE html>
-<html lang="th">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมส์จับผิดอาการทางแพทย์</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <style>
-        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+    <meta charset="utf-8">
+    <title>Summary of the Plan.</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.css">
+   	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+   	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <style type="text/css">
+    body {
+    	font-family: "Prompt", sans-serif;
+    	font-weight: 400;
+    	font-style: normal;
+    }
+    </style>
+</head>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "Kanit", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-        }
-
-        body {
-            background: radial-gradient(circle, #330066 0%, #000033 100%);
-            min-height: 100vh;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        @keyframes fadeInUp {
-            from {
+<body>
+	<div class="container" style="background-color:#006699;">
+		<div class="text-center text-white p-2">
+			<h2>สรุปยอดแผนประจำวัน</h2>
+		</div>
+	</div>
+	<div class="container" style="background-color:#0066FF;">
+		<div class="row pt-2 ps-2 pe-2 text-white boild">
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0">
+				<p class="m-2">สินค้า</p>
+			</div>
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0">
+				<p class="m-2">Lot</p>
+			</div>
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0">
+				<p class="m-2">Batch</p>
+			</div>
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center">
+				<p class="m-2">รับเข้า</p>
+			</div>
+		</div>
+		<div class="row pb-2 ps-2 pe-2 text-white boild">
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0 border-top-0">
+				<select class="form-select">
+					<option selected>📦</option>
+					<option value="1">เต้าส่วน</option>
+					<option value="2">กล้วยชิ้น</option>
+					<option value="3">กล้วยลูก</option>
+					<option value="4">ขนมตาล</option>
+					<option value="5">ถั่วแปบ</option>
+					<option value="6">โมจิโอวัลติน</option>
+					<option value="7">พุดดิ้งโอวัลติน</option>
+					<option value="8">ตะโก้เผือก</option>
+					<option value="9">มันทิพย์</option>
+					<option value="10">เผือกทิพย์</option>
+					<option value="11">ข้าวเหนียวลำไย</option>
+					<option value="12">โมจิใส</option>
+					<option value="13">ชานมโมจิ</option>
+					<option value="14">ไข่มุกทรงเครื่อง</option>
+				</select>
+			</div>
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0 border-top-0">
+				<input type="date" class="form-control" name="date">
+			</div>
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-end-0 border-top-0">
+				<input type="text" class="form-control" placeholder="กรอกข้อมูล">
+			</div>
+			<div class="col-3 border border-info-subtle d-flex justify-content-center align-items-center border-top-0">
+				<input type="text" class="form-control" placeholder="กรอกข้อมูล">
+			</div>
+		</div>
+	</div>
+    <!-- ถ้าจะใช้ Bootstrap JS -->
+    <!-- <script src="js/bootstrap.js"></script> -->
+</body>
+</html>            from {
                 opacity: 0;
                 transform: translateY(30px) scale(0.95);
             }
