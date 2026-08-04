@@ -306,7 +306,7 @@ function saveData(){
   const day = lotDate.split("-")[2]; 
   const number = Number(qty).toLocaleString("en-US"); 
 
-  const text = `${productVal}\n${day}/${batch}=${number};`; 
+  const text = `${productVal}\n${day}/${batch}=${number}`; 
 
   if(result.value != ""){
     result.value += "\n\n";
