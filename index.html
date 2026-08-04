@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Summary of the Plan.</title> 
+<title>Summary of the Plan</title> 
 
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,14 +14,19 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
 
-<!-- SweetAlert2 CDN -->
+<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Flatpickr (Custom Datepicker สวยๆ) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 
 <style> 
 :root {
-  --primary-color: #0066FF;
-  --header-bg: linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%);
-  --accent-color: #eef2f5;
+  --primary-gradient: linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%);
+  --accent-color: #4364F7;
 }
 
 body {
@@ -31,7 +36,7 @@ body {
 } 
 
 .app-header {
-  background: var(--header-bg);
+  background: var(--primary-gradient);
   box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2);
 }
 
@@ -39,55 +44,70 @@ body {
   background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  padding: 28px;
-  margin-top: 25px;
+  padding: 24px;
+  margin-top: 20px;
   border: 1px solid rgba(255, 255, 255, 0.8);
 } 
 
 .table-header-custom {
-  background: var(--header-bg);
-  border-radius: 12px 12px 0 0;
+  background: var(--primary-gradient);
+  border-radius: 16px;
+  padding: 15px;
 }
 
-/* Custom Style สำหรับ Form Control, Select และ Date */
-.form-select, 
-.form-control {
-  border-radius: 10px;
+/* Custom Input Styles */
+.form-control, .custom-select-btn {
+  border-radius: 12px;
   border: 1.5px solid #dce4ec;
-  padding: 10px 14px;
+  padding: 12px 16px;
   font-size: 0.95rem;
   transition: all 0.25s ease-in-out;
-  background-color: #fdfdfd;
-}
-
-.form-select:hover, 
-.form-control:hover {
-  border-color: #b0c4de;
   background-color: #ffffff;
+  color: #333;
+  width: 100%;
+  text-align: left;
 }
 
-.form-select:focus, 
 .form-control:focus {
-  border-color: #4364F7;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 4px rgba(67, 100, 247, 0.15);
-  background-color: #ffffff;
 }
 
-/* ปรับแต่ง Dropdown Option */
-.form-select option {
-  padding: 10px;
-  font-size: 0.95rem;
+.custom-select-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* ปรับแต่ง Calendar Picker Icon ใน Date input */
-input[type="date"]::-webkit-calendar-picker-indicator {
+/* Flatpickr Custom Design */
+.flatpickr-calendar {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+  border: none !important;
+  font-family: 'Prompt', sans-serif !important;
+}
+
+.flatpickr-day.selected {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+/* Modal Selector Design */
+.product-list-group .list-group-item {
+  border-radius: 12px !important;
+  margin-bottom: 8px;
+  border: 1.5px solid #edf2f7;
+  padding: 12px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
   cursor: pointer;
-  filter: invert(35%) sepia(80%) saturate(1500%) hue-rotate(210deg);
-  transition: transform 0.2s ease;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  transform: scale(1.2);
+.product-list-group .list-group-item:hover,
+.product-list-group .list-group-item.active {
+  background-color: #eef2ff;
+  color: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 textarea.form-control {
@@ -98,10 +118,10 @@ textarea.form-control {
   line-height: 1.6;
 }
 
-/* Button Custom Styles */
+/* Buttons Styling */
 .btn {
-  border-radius: 10px;
-  padding: 8px 18px;
+  border-radius: 12px;
+  padding: 10px 20px;
   font-weight: 500;
   transition: all 0.2s ease;
 }
@@ -117,7 +137,7 @@ textarea.form-control {
 .btn-warning { background-color: #ff9f1c; border: none; color: #fff; }
 .btn-warning:hover { background-color: #e88e13; color: #fff; }
 
-.btn-primary { background-color: #4364F7; border: none; }
+.btn-primary { background-color: var(--accent-color); border: none; }
 .btn-primary:hover { background-color: #3151d8; }
 
 .btn-danger { background-color: #e63946; border: none; }
@@ -130,71 +150,54 @@ textarea.form-control {
 
 <div class="app-header">
   <div class="text-center text-white p-3">
-    <h2 class="mb-0 fw-bold">📊 สรุปยอดแผนประจำวัน</h2>
+    <h3 class="mb-0 fw-bold">📊 สรุปยอดแผนประจำวัน</h3>
   </div>
 </div> 
 
 <div class="container mb-5"> 
   <div class="card-box"> 
 
-    <div class="table-header-custom shadow-sm overflow-hidden"> 
-      <div class="row pt-3 ps-3 pe-3 text-white fw-bold"> 
-        <div class="col-md-3 col-6 text-center pb-2">
-          <h5>สินค้า</h5>
-        </div> 
-        <div class="col-md-3 col-6 text-center pb-2">
-          <h5>Lot</h5>
-        </div> 
-        <div class="col-md-3 col-6 text-center pb-2">
-          <h5>Batch</h5>
-        </div> 
-        <div class="col-md-3 col-6 text-center pb-2">
-          <h5>รับเข้า</h5>
-        </div> 
-      </div> 
+    <div class="table-header-custom shadow-sm"> 
+      <div class="row g-3"> 
 
-      <div class="row pb-3 ps-3 pe-3 bg-white pt-2 rounded-bottom"> 
-        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
-          <select class="form-select" id="product"> 
-            <option value="">📦 เลือกสินค้า...</option> 
-            <option>เต้าส่วน</option>
-            <option>กล้วยชิ้น</option>
-            <option>กล้วยลูก</option>
-            <option>ขนมตาล</option>
-            <option>ถั่วแปบ</option>
-            <option>โมจิโอวัลติน</option>
-            <option>พุดดิ้งโอวัลติน</option>
-            <option>ตะโก้เผือก</option>
-            <option>มันทิพย์</option>
-            <option>เผือกทิพย์</option>
-            <option>ข้าวเหนียวลำไย</option>
-            <option>โมจิใส</option>
-            <option>ชานมโมจิ</option>
-            <option>ไข่มุกทรงเครื่อง</option> 
-          </select> 
+        <!-- ปุ่มเลือกสินค้า (เปิด Modal สวยๆ) -->
+        <div class="col-md-3 col-12">
+          <label class="form-label text-white fw-bold d-md-block d-none">สินค้า</label>
+          <button class="custom-select-btn" type="button" data-bs-toggle="modal" data-bs-target="#productModal">
+            <span id="selectedProductText">📦 เลือกสินค้า...</span>
+            <small>▼</small>
+          </button>
+          <input type="hidden" id="productVal" value="">
         </div> 
 
-        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
-          <input type="date" class="form-control" id="lotDate"> 
+        <!-- ตัวเลือกวันที่ (Flatpickr) -->
+        <div class="col-md-3 col-12"> 
+          <label class="form-label text-white fw-bold d-md-block d-none">Lot (วันที่)</label>
+          <input type="text" class="form-control" id="lotDate" placeholder="📅 เลือกวันที่ Lot..."> 
         </div> 
 
-        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
-          <input type="text" class="form-control" id="batch" placeholder="กรอกข้อมูล Batch"> 
+        <!-- ช่องกรอก Batch -->
+        <div class="col-md-3 col-12"> 
+          <label class="form-label text-white fw-bold d-md-block d-none">Batch</label>
+          <input type="text" class="form-control" id="batch" placeholder="🏷️ กรอก Batch"> 
         </div> 
 
-        <div class="col-md-3 col-12 mb-2 mb-md-0"> 
-          <input type="number" class="form-control" id="qty" placeholder="กรอกจำนวนรับเข้า"> 
+        <!-- ช่องกรอกจำนวน -->
+        <div class="col-md-3 col-12"> 
+          <label class="form-label text-white fw-bold d-md-block d-none">รับเข้า</label>
+          <input type="number" class="form-control" id="qty" placeholder="🔢 จำนวนรับเข้า"> 
         </div> 
+
       </div>
     </div> 
 
-    <!-- ปุ่มการทำงานฝั่งฟอร์มด้านบน -->
+    <!-- ปุ่ม Save & Clear Form -->
     <div class="mt-4 d-flex flex-wrap gap-2"> 
-      <button class="btn btn-success" onclick="saveData()">💾 Save</button> 
-      <button class="btn btn-warning" onclick="clearForm()">🧹 Clear Form</button> 
+      <button class="btn btn-success flex-grow-1 flex-md-grow-0" onclick="saveData()">💾 Save</button> 
+      <button class="btn btn-warning flex-grow-1 flex-md-grow-0" onclick="clearForm()">🧹 Clear Form</button> 
     </div> 
 
-    <!-- ผลลัพธ์และปุ่มจัดการผลลัพธ์ด้านล่าง -->
+    <!-- ผลลัพธ์ -->
     <div class="mt-4"> 
       <label class="form-label fw-bold fs-5 text-secondary">📋 ผลลัพธ์</label> 
       <textarea id="result" class="form-control" rows="8" readonly placeholder="กด Save เพื่อบันทึกข้อมูล..."></textarea> 
@@ -208,114 +211,146 @@ textarea.form-control {
   </div> 
 </div> 
 
+<!-- Modal เลือกสินค้าแบบค้นหาและสวยงาม -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content" style="border-radius: 20px; border:none;">
+      <div class="modal-header" style="background: var(--primary-gradient); color:white; border-radius: 20px 20px 0 0;">
+        <h5 class="modal-title fw-bold">📦 เลือกรายการสินค้า</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3">
+        <!-- Search Input -->
+        <input type="text" class="form-control mb-3" id="searchProduct" placeholder="🔍 ค้นหาสินค้า..." onkeyup="filterProducts()">
+        
+        <!-- รายการสินค้า -->
+        <div class="list-group product-list-group" id="productList">
+          <div class="list-group-item" onclick="selectProduct('เต้าส่วน')">เต้าส่วน</div>
+          <div class="list-group-item" onclick="selectProduct('กล้วยชิ้น')">กล้วยชิ้น</div>
+          <div class="list-group-item" onclick="selectProduct('กล้วยลูก')">กล้วยลูก</div>
+          <div class="list-group-item" onclick="selectProduct('ขนมตาล')">ขนมตาล</div>
+          <div class="list-group-item" onclick="selectProduct('ถั่วแปบ')">ถั่วแปบ</div>
+          <div class="list-group-item" onclick="selectProduct('โมจิโอวัลติน')">โมจิโอวัลติน</div>
+          <div class="list-group-item" onclick="selectProduct('พุดดิ้งโอวัลติน')">พุดดิ้งโอวัลติน</div>
+          <div class="list-group-item" onclick="selectProduct('ตะโก้เผือก')">ตะโก้เผือก</div>
+          <div class="list-group-item" onclick="selectProduct('มันทิพย์')">มันทิพย์</div>
+          <div class="list-group-item" onclick="selectProduct('เผือกทิพย์')">เผือกทิพย์</div>
+          <div class="list-group-item" onclick="selectProduct('ข้าวเหนียวลำไย')">ข้าวเหนียวลำไย</div>
+          <div class="list-group-item" onclick="selectProduct('โมจิใส')">โมจิใส</div>
+          <div class="list-group-item" onclick="selectProduct('ชานมโมจิ')">ชานมโมจิ</div>
+          <div class="list-group-item" onclick="selectProduct('ไข่มุกทรงเครื่อง')">ไข่มุกทรงเครื่อง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script> 
 const STORAGE_KEY = "summary_plan_data"; 
+let productModalObj;
 
-// โหลดข้อมูลเก่าเมื่อเปิดหน้า
+// เริ่มต้นเปิดหน้าเว็บ
 window.onload = function(){ 
   const data = localStorage.getItem(STORAGE_KEY); 
   if(data){
     document.getElementById("result").value = data;
   } 
+
+  // ติดตั้ง Flatpickr Date Picker (ภาษาไทย สไตล์ปฏิทินสว่าง)
+  flatpickr("#lotDate", {
+    locale: "th",
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "j F Y",
+    disableMobile: "true" // บังคับใช้ธีมสวยงามไม่ใช้ของระบบมือถือ
+  });
+
+  productModalObj = new bootstrap.Modal(document.getElementById('productModal'));
 };
 
+// เลือกสินค้าจาก Modal
+function selectProduct(name) {
+  document.getElementById("selectedProductText").innerText = "📦 " + name;
+  document.getElementById("productVal").value = name;
+  productModalObj.hide();
+}
+
+// ระบบค้นหาสินค้าใน Modal
+function filterProducts() {
+  const input = document.getElementById('searchProduct').value.toLowerCase();
+  const items = document.querySelectorAll('#productList .list-group-item');
+  items.forEach(item => {
+    const text = item.innerText.toLowerCase();
+    item.style.display = text.includes(input) ? '' : 'none';
+  });
+}
+
 function saveData(){ 
-  const product = document.getElementById("product");
+  const productVal = document.getElementById("productVal").value;
   const lotDate = document.getElementById("lotDate").value;
   const batch = document.getElementById("batch").value.trim();
   const qty = document.getElementById("qty").value;
   const result = document.getElementById("result"); 
 
-  // SweetAlert Validation
-  if(product.value == ""){
-    Swal.fire({
-      icon: 'warning',
-      title: 'แจ้งเตือน',
-      text: 'กรุณาเลือกสินค้า',
-      confirmButtonColor: '#4364F7'
-    });
+  if(productVal == ""){
+    Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณาเลือกสินค้า', confirmButtonColor: '#4364F7' });
     return;
   } 
 
   if(lotDate == "" || batch == "" || qty == ""){
-    Swal.fire({
-      icon: 'warning',
-      title: 'ข้อมูลไม่ครบถ้วน',
-      text: 'กรุณากรอก วันที่, Batch และ จำนวน ให้ครบถ้วน',
-      confirmButtonColor: '#4364F7'
-    });
+    Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอก วันที่, Batch และ จำนวน ให้ครบถ้วน', confirmButtonColor: '#4364F7' });
     return;
   } 
 
-  // แสดงเฉพาะ "วัน"
+  // ดึงเฉพาะ "วัน"
   const day = lotDate.split("-")[2]; 
-
-  // ใส่ comma
   const number = Number(qty).toLocaleString("en-US"); 
 
-  const text = `${product.options[product.selectedIndex].text}\n${day}/${batch}=${number};`; 
+  const text = `${productVal}\n${day}/${batch}=${number};`; 
 
   if(result.value != ""){
     result.value += "\n\n";
   } 
 
   result.value += text; 
-
-  // บันทึก LocalStorage
   localStorage.setItem(STORAGE_KEY, result.value); 
 
-  // แจ้งเตือนสำเร็จ
   Swal.fire({
     icon: 'success',
     title: 'บันทึกสำเร็จ!',
-    text: 'เพิ่มข้อมูลลงในผลลัพธ์เรียบร้อยแล้ว',
-    timer: 1500,
+    timer: 1300,
     showConfirmButton: false
   });
 
-  // ล้างฟอร์ม
   clearForm(); 
 } 
 
 function clearForm(){ 
-  document.getElementById("product").selectedIndex = 0;
+  document.getElementById("selectedProductText").innerText = "📦 เลือกสินค้า...";
+  document.getElementById("productVal").value = "";
   document.getElementById("lotDate").value = "";
+  if(document.getElementById("lotDate")._flatpickr) {
+    document.getElementById("lotDate")._flatpickr.clear();
+  }
   document.getElementById("batch").value = "";
   document.getElementById("qty").value = ""; 
 }
 
 function copyText(){ 
   const result = document.getElementById("result"); 
-
   if(result.value == ""){
-    Swal.fire({
-      icon: 'info',
-      title: 'ไม่พบข้อมูล',
-      text: 'ไม่มีข้อมูลสำหรับคัดลอก',
-      confirmButtonColor: '#4364F7'
-    });
+    Swal.fire({ icon: 'info', title: 'ไม่พบข้อมูล', text: 'ไม่มีข้อมูลสำหรับคัดลอก', confirmButtonColor: '#4364F7' });
     return;
   } 
 
   navigator.clipboard.writeText(result.value)
   .then(()=>{
-    Swal.fire({
-      icon: 'success',
-      title: 'คัดลอกแล้ว!',
-      text: 'คัดลอกข้อความลง Clipboard เรียบร้อยแล้ว',
-      timer: 1500,
-      showConfirmButton: false
-    });
+    Swal.fire({ icon: 'success', title: 'คัดลอกแล้ว!', timer: 1300, showConfirmButton: false });
   })
   .catch(()=>{
     result.select();
     document.execCommand("copy");
-    Swal.fire({
-      icon: 'success',
-      title: 'คัดลอกแล้ว!',
-      timer: 1500,
-      showConfirmButton: false
-    });
+    Swal.fire({ icon: 'success', title: 'คัดลอกแล้ว!', timer: 1300, showConfirmButton: false });
   }); 
 } 
 
@@ -326,7 +361,7 @@ function clearTextArea(){
 
   Swal.fire({
     title: 'ยืนยันการลบ?',
-    text: "คุณต้องการลบข้อความทั้งหมดใช่หรือไม่ ข้อมูลจะถูกลบออกจากความจำเครื่องด้วย",
+    text: "ต้องการลบข้อความทั้งหมดใช่หรือไม่?",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#e63946',
@@ -337,13 +372,7 @@ function clearTextArea(){
     if (resultAction.isConfirmed) {
       document.getElementById("result").value = ""; 
       localStorage.removeItem(STORAGE_KEY); 
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'ลบเรียบร้อย!',
-        timer: 1200,
-        showConfirmButton: false
-      });
+      Swal.fire({ icon: 'success', title: 'ลบเรียบร้อย!', timer: 1200, showConfirmButton: false });
     }
   });
 } 
