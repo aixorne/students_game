@@ -300,17 +300,33 @@ function saveData(){
   } 
 
   const day = lotDate.split("-")[2]; 
-  
-  // ถ้าไม่ได้กรอกจำนวน ให้ปล่อยเป็นค่าว่าง ("") และลบตัว ; ออกแล้ว
   const number = qty !== "" ? Number(qty).toLocaleString("en-US") : ""; 
+  const lotLine = `${day}/${batch}=${number}`;
 
-  const text = `${productVal}\n${day}/${batch}=${number}`; 
+  if(result.value.trim() === ""){
+    // ถ้าไม่มีข้อมูลเดิม ให้ใส่ชื่อสินค้าขึ้นต้น
+    result.value = `${productVal}\n${lotLine}`;
+  } else {
+    const lines = result.value.trim().split("\n");
+    
+    // ค้นหาสินค้าตัวล่าสุด
+    let lastProduct = "";
+    for(let i = lines.length - 1; i >= 0; i--){
+      if(lines[i].trim() !== "" && !lines[i].includes("=")){
+        lastProduct = lines[i].trim();
+        break;
+      }
+    }
 
-  if(result.value != ""){
-    result.value += "\n\n";
-  } 
+    // ถ้าบันทึกสินค้าเดิม ให้ต่อบรรทัดใหม่ทันทีโดยไม่พิมพ์ชื่อสินค้าซ้ำ
+    if(lastProduct === productVal){
+      result.value += `\n${lotLine}`;
+    } else {
+      // ถ้าเปลี่ยนสินค้าใหม่ ให้เว้นบรรทัด แล้วขึ้นชื่อสินค้าใหม่
+      result.value += `\n\n${productVal}\n${lotLine}`;
+    }
+  }
 
-  result.value += text; 
   localStorage.setItem(STORAGE_KEY, result.value); 
 
   Swal.fire({
