@@ -149,7 +149,7 @@ function saveData(){
   const number = Number(qty).toLocaleString("en-US"); 
 
   // แก้ไขใส่ Backticks (`) เรียบร้อยแล้ว
-  const text = `${product.options[product.selectedIndex].text}\n${day}/${batch}=${number};`; 
+  const text = `${product.options[product.selectedIndex].text}\n${day}/${batch}=${number}`; 
 
   if(result.value != ""){
     result.value += "\n\n";
