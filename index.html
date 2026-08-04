@@ -215,10 +215,10 @@ body {
           <input type="text" class="form-control" id="lotDate" placeholder="📅 เลือกวันที่ Lot..."> 
         </div> 
 
-        <!-- ช่องกรอก Batch -->
+        <!-- ช่องกรอก Batch (ปรับให้จัดรูปแบบ 12-34 อัตโนมัติ) -->
         <div class="col-md-3 col-12"> 
           <label class="form-label text-white fw-bold d-md-block d-none">Batch</label>
-          <input type="text" class="form-control" id="batch" placeholder="🏷️ กรอก Batch"> 
+          <input type="text" class="form-control" id="batch" placeholder="🏷️ Ex. 12-34" maxlength="5" oninput="formatBatchInput(this)"> 
         </div> 
 
         <!-- ช่องกรอกจำนวน (ไม่บังคับ) -->
@@ -249,7 +249,7 @@ body {
       
       <div class="mt-3 d-flex flex-wrap gap-2">
         <button class="btn btn-primary" onclick="copyText()">📋 Copy ข้อความ</button> 
-        <button class="btn btn-info" onclick="sortData()">🔤 จัดเรียง ก-ฮ</button> 
+        <button class="btn btn-info" onclick="sortData()">📅 จัดเรียงวันที่ (น้อย->มาก)</button> 
         <button class="btn btn-danger" onclick="clearTextArea()">🗑 ลบข้อความทั้งหมด</button> 
       </div>
     </div> 
@@ -293,7 +293,7 @@ body {
 
 <script> 
 const STORAGE_KEY = "summary_plan_data_v2"; 
-let appData = []; // [{ product: 'เผือกทิพย์', items: ['05/41-285=10,290', '06/01-21=875'] }]
+let appData = []; 
 let productModalObj;
 
 window.onload = function(){ 
@@ -318,6 +318,18 @@ window.onload = function(){
 
   productModalObj = new bootstrap.Modal(document.getElementById('productModal'));
 };
+
+/* ฟังก์ชันจัดรูปแบบช่อง Batch ให้พิมพ์ได้เฉพาะเลข 4 ตัวแล้วแทรก - ตรงกลางอัตโนมัติ */
+function formatBatchInput(input) {
+  let val = input.value.replace(/\D/g, ''); // กรองเฉพาะตัวเลขเท่านั้น
+  if (val.length > 4) val = val.substring(0, 4); // จำกัดไม่เกิน 4 ตัว
+  
+  if (val.length > 2) {
+    input.value = val.substring(0, 2) + '-' + val.substring(2);
+  } else {
+    input.value = val;
+  }
+}
 
 function selectProduct(name) {
   document.getElementById("selectedProductText").innerText = "📦 " + name;
@@ -418,7 +430,6 @@ function deleteSingleItem(groupIdx, itemIdx) {
   }).then((resultAction) => {
     if (resultAction.isConfirmed) {
       appData[groupIdx].items.splice(itemIdx, 1);
-      // ถ้าลบหมดจนไม่มีรายการในกลุ่มสินค้านั้นแล้ว ให้ลบหัวข้อสินค้านั้นออกด้วย
       if(appData[groupIdx].items.length === 0){
         appData.splice(groupIdx, 1);
       }
@@ -428,12 +439,26 @@ function deleteSingleItem(groupIdx, itemIdx) {
   });
 }
 
+function getDayNumber(itemStr) {
+  const dayStr = itemStr.split("/")[0];
+  return parseInt(dayStr, 10) || 0;
+}
+
 function sortData() {
   if(appData.length === 0) return;
-  // จัดเรียงกลุ่มสินค้าตามชื่อภาษาไทย (ก-ฮ)
-  appData.sort((a, b) => a.product.localeCompare(b.product, 'th'));
+
+  appData.forEach(group => {
+    group.items.sort((a, b) => getDayNumber(a) - getDayNumber(b));
+  });
+
+  appData.sort((a, b) => {
+    const minDayA = Math.min(...a.items.map(getDayNumber));
+    const minDayB = Math.min(...b.items.map(getDayNumber));
+    return minDayA - minDayB;
+  });
+
   saveAndRefresh();
-  Swal.fire({ icon: 'success', title: 'จัดเรียงข้อมูลเรียบร้อย!', timer: 1200, showConfirmButton: false });
+  Swal.fire({ icon: 'success', title: 'จัดเรียงตามวันที่เรียบร้อย!', timer: 1200, showConfirmButton: false });
 }
 
 function getFormattedPlainText() {
