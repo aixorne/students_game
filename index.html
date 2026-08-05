@@ -215,11 +215,18 @@ body {
           <input type="text" class="form-control" id="lotDate" placeholder="📅 เลือกวันที่ Lot..."> 
         </div> 
 
-        <!-- ช่องกรอก Batch (ปรับให้จัดรูปแบบ 12-34 อัตโนมัติ) -->
+        <!-- ช่องกรอก Batch (รองรับ xx-xx และ xx-xxx) -->
         <div class="col-md-3 col-12"> 
-  <label class="form-label text-white fw-bold d-md-block d-none">Batch</label>
-  <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" id="batch" placeholder="🏷️ Ex. 12-34" maxlength="5" oninput="formatBatchInput(this)"> 
-</div> 
+          <label class="form-label text-white fw-bold d-md-block d-none">Batch</label>
+          <input type="text" 
+                 inputmode="numeric" 
+                 pattern="[0-9]*" 
+                 class="form-control" 
+                 id="batch" 
+                 placeholder="🏷️ Ex. 12-34 หรือ 12-345" 
+                 maxlength="6" 
+                 oninput="formatBatchInput(this)"> 
+        </div> 
 
         <!-- ช่องกรอกจำนวน (ไม่บังคับ) -->
         <div class="col-md-3 col-12"> 
@@ -319,10 +326,10 @@ window.onload = function(){
   productModalObj = new bootstrap.Modal(document.getElementById('productModal'));
 };
 
-/* ฟังก์ชันจัดรูปแบบช่อง Batch ให้พิมพ์ได้เฉพาะเลข 4 ตัวแล้วแทรก - ตรงกลางอัตโนมัติ */
+/* ฟังก์ชันจัดรูปแบบช่อง Batch ให้รองรับตัวเลข 4-5 ตัว แล้วแทรก - หลังเลข 2 ตัวแรก */
 function formatBatchInput(input) {
-  let val = input.value.replace(/\D/g, ''); // กรองเฉพาะตัวเลขเท่านั้น
-  if (val.length > 4) val = val.substring(0, 4); // จำกัดไม่เกิน 4 ตัว
+  let val = input.value.replace(/\D/g, ''); // กรองเอาเฉพาะตัวเลข
+  if (val.length > 5) val = val.substring(0, 5); // จำกัดตัวเลขไม่เกิน 5 ตัว
   
   if (val.length > 2) {
     input.value = val.substring(0, 2) + '-' + val.substring(2);
@@ -386,6 +393,18 @@ function saveData(){
     Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอก วันที่ (Lot) และ Batch ให้เรียบร้อย', confirmButtonColor: '#4364F7' });
     return;
   } 
+
+  // ตรวจสอบรูปแบบ Batch ว่าต้องเป็น xx-xx หรือ xx-xxx เท่านั้น
+  const batchPattern = /^\d{2}-\d{2,3}$/;
+  if(!batchPattern.test(batch)){
+    Swal.fire({ 
+      icon: 'warning', 
+      title: 'รูปแบบ Batch ไม่ถูกต้อง', 
+      text: 'กรุณากรอก Batch ในรูปแบบ xx-xx หรือ xx-xxx เท่านั้น (เช่น 12-34 หรือ 12-345)', 
+      confirmButtonColor: '#4364F7' 
+    });
+    return;
+  }
 
   const day = lotDate.split("-")[2]; 
   const number = qty !== "" ? Number(qty).toLocaleString("en-US") : ""; 
